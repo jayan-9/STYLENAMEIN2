@@ -444,19 +444,31 @@
   </div>
 </div>
 
+
+<script src="data.js" defer></script>
+<script src="script.js" defer></script>
+    
+  // See more     
     <script>
 (function(){
   const btn = document.getElementById('guideMoreBtn');
   const more = document.getElementById('guideMore');
   if (!btn || !more) return;
 
+  // Ensure hidden by default
+  more.hidden = true;
+  btn.classList.remove('open');
+  btn.querySelector('span').textContent = 'See More';
+
   btn.addEventListener('click', function(){
     const isOpen = !more.hidden;
     if (isOpen) {
+      // Close
       more.hidden = true;
       btn.classList.remove('open');
       btn.querySelector('span').textContent = 'See More';
     } else {
+      // Open
       more.hidden = false;
       btn.classList.add('open');
       btn.querySelector('span').textContent = 'See Less';
@@ -464,8 +476,6 @@
   });
 })();
     </script>
-
-<script src="data.js" defer></script>
-<script src="script.js" defer></script>
+    
 </body>
 </html>
