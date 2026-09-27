@@ -12,7 +12,7 @@ site: {
   tagline: 'Stylish Name Generator Tool',
 
   about:
-    'stylename.in is a free stylish name generator that gives you 500+ stylish fonts ' +
+    'stylename.in is a free stylish name generator that gives you 100+ stylish fonts and styles ' +
     'and fancy text styles. Make your name stylish for Instagram, Free Fire, PUBG, ' +
     'WhatsApp, Gaming, and Social Media — copy it with just one tap.\n' +
     'All fonts are Unicode-based, so they work perfectly on any device and app. ' +
@@ -20,14 +20,14 @@ site: {
 
   faq: [
     {
-      q: 'What is Stylenm and how does it work?',
+      q: 'What is Stylename.in and how does it work?',
       a: 'Stylenamr is a free online stylish name generator. You type your name, ' +
-         'and we convert it into 500+ Unicode fonts. Pick the one you like, ' +
+         'and we convert it into unlimited Unicode fonts. Pick the one you like, ' +
          'copy it with one tap, and paste it into any app.'
     },
     {
       q: 'Is this tool completely free?',
-      a: 'Yes, Stylename is 100% free. No signup, no hidden charges, no watermark. ' +
+      a: 'Yes, stylename.in is 100% free. No signup, no hidden charges, no watermark. ' +
          'Use it as many times as you want.'
     },
     {
@@ -54,7 +54,7 @@ site: {
   ],
 
   why: [
-    { title: '100+ Stylish Fonts', desc: 'Instagram, Free Fire, Gaming, Love, Cute — 50+ styles in every category.' },
+    { title: 'unlimited Stylish Fonts', desc: 'Instagram, Free Fire, Gaming, Love, Cute — 50+ styles in every category.' },
     { title: '100% Free Forever', desc: 'No signup, no payment, no watermark.' },
     { title: 'One Tap Copy', desc: 'A copy button with every style — straight to your clipboard.' },
     { title: 'Favorites Save', desc: 'Heart the styles you like, and they appear at the top.' },
