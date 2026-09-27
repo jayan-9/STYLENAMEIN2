@@ -12,7 +12,7 @@ site: {
   tagline: 'Stylish Name Generator Tool',
 
   about:
-    'stylename.in is a free stylish name generator that gives you 100+ stylish fonts and styles ' +
+    'stylename.in is a free stylish name generator that gives you 1000+ stylish fonts and styles ' +
     'and fancy text styles. Make your name stylish for Instagram, Free Fire, PUBG, ' +
     'WhatsApp, Gaming, and Social Media — copy it with just one tap.\n' +
     'All fonts are Unicode-based, so they work perfectly on any device and app. ' +
