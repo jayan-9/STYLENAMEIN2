@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact Us — styleName.in | Get in Touch</title>
+<meta name="description" content="Contact styleName.in — the free stylish name generator. Send feedback, report a bug, suggest new styles, or make a business enquiry. We reply within 24–48 hours.">
+<meta name="keywords" content="contact stylename.in, stylish name generator contact, feedback, business enquiry, report bug">
+<meta name="author" content="styleName.in">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#eaf6ff">
+<link rel="canonical" href="https://stylename.in/contact.html">
+
+<!-- Google AdSense -->
+<meta name="google-adsense-account" content="ca-pub-5781318703267732">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contact Us — styleName.in">
+<meta property="og:description" content="Get in touch with styleName.in. We reply within 24–48 hours.">
+<meta property="og:url" content="https://stylename.in/contact.html">
+<meta property="og:site_name" content="styleName.in">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Contact Us — styleName.in">
+<meta name="twitter:description" content="Get in touch with styleName.in. We reply within 24–48 hours.">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page-body">
+
+<!-- ============ NAVBAR ============ -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-dot"></span><span id="brandName">styleName.in</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="drawer" id="drawer" hidden>
+    <a href="about.html">About Us</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms &amp; Conditions</a>
+    <a href="index.html#faq">FAQ</a>
+  </nav>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="page-wrap">
+  <a class="back-link" href="index.html">← Back to Home</a>
+
+  <h1 class="page-title">Contact Us</h1>
+  <p class="page-sub">We'd love to hear from you. Questions, feedback, or ideas — send them our way.</p>
+
+  <div class="prose page-prose">
+
+    <p>
+      Whether you want to share your experience with <strong>styleName.in</strong>, 
+      suggest a new font style, report a bug, or discuss a business partnership — we're 
+      here to listen. We read every single message and reply within 
+      <strong>24–48 hours</strong>.
+    </p>
+
+    <!-- ============ CONTACT CARDS ============ -->
+    <div class="contact-cards">
+      <div class="contact-card">
+        <div class="contact-icon">📧</div>
+        <h3>Email</h3>
+        <p><a href="mailto:stylenamein@gmail.com">stylenamein@gmail.com</a></p>
+        <p style="font-size:.78rem;margin-top:6px;">Best for all enquiries</p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">💬</div>
+        <h3>Feedback</h3>
+        <p>Found a bug or want a new category? Tell us!</p>
+        <p style="font-size:.78rem;margin-top:6px;">We act on user suggestions</p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">🤝</div>
+        <h3>Business</h3>
+        <p>Partnerships, sponsorships, and collaborations.</p>
+        <p style="font-size:.78rem;margin-top:6px;">Reply within 2 business days</p>
+      </div>
+    </div>
+
+    <!-- ============ CONTACT FORM ============ -->
+    <h2>📝 Send Us a Message</h2>
+    <p>
+      Fill out the form below and we'll get back to you as soon as possible. Fields marked 
+      with <strong>*</strong> are required.
+    </p>
+
+    <form id="contactForm" class="contact-form" action="https://formspree.io/f/xzdkblzn" method="POST">
+
+      <div class="form-group">
+        <label for="name">Your Full Name *</label>
+        <input type="text" id="name" name="name" placeholder="e.g., Rahul Kumar" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="_replyto" placeholder="you@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Subject *</label>
+        <select id="subject" name="subject" required>
+          <option value="" disabled selected>— Select a subject —</option>
+          <option value="General Inquiry">📝 General Inquiry</option>
+          <option value="Feedback / Suggestion">💡 Feedback / Suggestion</option>
+          <option value="Bug Report">🐛 Report a Bug</option>
+          <option value="Partnership">🤝 Partnership Opportunity</option>
+          <option value="AdSense / Monetization">📊 AdSense / Monetization</option>
+          <option value="Content Request">📄 Content Request</option>
+          <option value="Other">📌 Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Your Message *</label>
+        <textarea id="message" name="message" placeholder="Write your message here in detail..." required></textarea>
+      </div>
+
+      <!-- Anti-spam (hidden) -->
+      <input type="text" name="_gotcha" style="display:none;">
+      <input type="hidden" name="_subject" value="New message from styleName.in">
+
+      <button type="submit" class="form-submit" id="submitBtn">
+        📨 Send Message
+      </button>
+
+      <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+
+    </form>
+
+    <!-- ============ WHAT CAN YOU CONTACT ABOUT ============ -->
+    <h2>📬 What Can You Contact Us About?</h2>
+    <p>Here are some common reasons people write to us:</p>
+    <ul class="prose-list">
+      <li><strong>Feedback &amp; Suggestions</strong> — tell us what you love and what we can improve.</li>
+      <li><strong>Bug Reports</strong> — if a style is not working or a page loads slowly, let us know.</li>
+      <li><strong>New Font Requests</strong> — want a specific style or symbol added? Ask us.</li>
+      <li><strong>New Category Requests</strong> — want us to add a new category? Just say so.</li>
+      <li><strong>Business Enquiries</strong> — partnerships, advertising, sponsorships, and collaborations.</li>
+      <li><strong>Privacy Questions</strong> — questions about your data or our privacy practices.</li>
+      <li><strong>Copyright Issues</strong> — if you believe any content infringes on your rights.</li>
+      <li><strong>Report Abuse</strong> — if someone is misusing our tool or services.</li>
+      <li><strong>Press &amp; Media</strong> — journalists and bloggers seeking quotes or interviews.</li>
+      <li><strong>Just Saying Hi</strong> — yes, we love those too! 💌</li>
+    </ul>
+
+    <!-- ============ BEFORE YOU WRITE ============ -->
+    <h2>📖 Before You Write</h2>
+    <p>To help us help you faster, please check these first:</p>
+    <ul class="prose-list">
+      <li>Read our <a href="index.html#faq">FAQ section</a> — most common questions are already answered there.</li>
+      <li>Read our <a href="privacy.html">Privacy Policy</a> — for questions about your data.</li>
+      <li>Read our <a href="terms.html">Terms &amp; Conditions</a> — for usage rules.</li>
+    </ul>
+
+    <!-- ============ RESPONSE TIME ============ -->
+    <h2>⏱️ Our Response Time</h2>
+    <p>We are a small team, but we make sure every message gets a reply:</p>
+    <ul class="prose-list">
+      <li><strong>General enquiries</strong> — within 24 hours</li>
+      <li><strong>Bug reports</strong> — within 48 hours</li>
+      <li><strong>Business enquiries</strong> — within 2 business days</li>
+      <li><strong>Legal / privacy requests</strong> — within 7 days</li>
+    </ul>
+    <p>
+      If you don't hear back within these timeframes, please check your spam folder — 
+      sometimes our emails end up there.
+    </p>
+
+    <!-- ============ LANGUAGES ============ -->
+    <h2>🌍 Languages We Support</h2>
+    <p>We are happy to receive emails in:</p>
+    <ul class="prose-list">
+      <li>English</li>
+      <li>Hindi (हिन्दी)</li>
+      <li>Hinglish (Hindi written in English)</li>
+    </ul>
+    <p>Feel free to write in whichever language you're most comfortable with.</p>
+
+    <!-- ============ OUR PROMISE ============ -->
+    <h2>🛡️ Our Promise to You</h2>
+    <p>When you contact us, we promise to:</p>
+    <ul class="prose-list">
+      <li>Never share your email with anyone else</li>
+      <li>Never add you to a mailing list without permission</li>
+      <li>Never use your message for any purpose other than replying</li>
+      <li>Never sell or rent your information</li>
+    </ul>
+    <p>
+      To read more about how we handle your data, please visit our 
+      <a href="privacy.html">Privacy Policy</a>.
+    </p>
+
+    <!-- ============ FINAL CTA ============ -->
+    <h2>💌 Ready to Write?</h2>
+    <p>Send your message to:</p>
+    <p style="font-size:1.05rem;text-align:center;padding:16px;background:var(--sky);border-radius:12px;margin:16px 0;">
+      📧 <strong><a href="mailto:stylenamein@gmail.com" style="color:var(--blue-dark);text-decoration:none;">stylenamein@gmail.com</a></strong>
+    </p>
+    <p style="text-align:center;color:var(--muted);font-size:.88rem;">
+      Thank you for using styleName.in. We can't wait to hear from you! 💙
+    </p>
+
+  </div>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <p>© <span id="year"></span> <strong>styleName.in</strong> — All Rights Reserved.</p>
+  <p class="foot-links">
+    <a href="about.html">About</a> · <a href="contact.html">Contact</a> ·
+    <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
+  </p>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const menuBtn = document.getElementById('menuBtn');
+  const drawer = document.getElementById('drawer');
+  menuBtn.addEventListener('click', () => {
+    const open = menuBtn.getAttribute('aria-expanded') === 'true';
+    menuBtn.setAttribute('aria-expanded', String(!open));
+    drawer.hidden = open;
+  });
+</script>
+
+<!-- ============ CONTACT FORM HANDLER (Formspree) ============ -->
+<script>
+(function() {
+  'use strict';
+
+  const form = document.getElementById('contactForm');
+  const statusDiv = document.getElementById('formStatus');
+  const submitBtn = document.getElementById('submitBtn');
+  if (!form) return;
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    submitBtn.disabled = true;
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '⏳ Sending...';
+
+    statusDiv.className = 'form-status';
+    statusDiv.textContent = '';
+    statusDiv.style.display = 'none';
+
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        statusDiv.className = 'form-status success';
+        statusDiv.textContent = '✅ Thank you! Your message has been sent. We will reply within 24–48 hours.';
+        statusDiv.style.display = 'block';
+        form.reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => { statusDiv.style.display = 'none'; }, 8000);
+      } else {
+        throw new Error('Server error');
+      }
+    } catch (err) {
+      statusDiv.className = 'form-status error';
+      statusDiv.innerHTML = '❌ Oops! Something went wrong. Please try again later or email us directly at <strong>stylenamein@gmail.com</strong>.';
+      statusDiv.style.display = 'block';
+      setTimeout(() => { statusDiv.style.display = 'none'; }, 10000);
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+  });
+})();
+</script>
+</body>
+</html>
