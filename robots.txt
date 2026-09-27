@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block nothing — everything is public
+Disallow:
+
+# Sitemap location
+Sitemap: https://stylename.in/sitemap.xml
