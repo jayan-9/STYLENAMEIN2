@@ -443,6 +443,7 @@
 
 <script src="data.js" defer></script>
 <script src="script.js" defer></script>
+<script src="symbols.js" defer></script>
     
   
     <script>
@@ -473,6 +474,18 @@
 })();
     </script>
 
+    <!-- ============ SYMBOL POPUP ============ -->
+<div class="symbol-popup" id="symbolPopup" hidden>
+  <div class="symbol-backdrop" id="symbolBackdrop"></div>
+  <div class="symbol-panel" role="dialog" aria-modal="true" aria-labelledby="symTitle">
+    <div class="symbol-header">
+      <h2 id="symTitle">☺︎ Symbols</h2>
+      <button class="symbol-close" id="symbolClose" aria-label="Close">✕</button>
+    </div>
+    <div class="symbol-cat-bar" id="symbolCatBar"></div>
+    <div class="symbol-grid" id="symbolGrid"></div>
+  </div>
+</div>
     
 </body>
 </html>
