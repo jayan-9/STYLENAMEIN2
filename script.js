@@ -1,11 +1,3 @@
-/* =========================================================
-   Stylenm.com — Stylish Name Generator
-   Lazy loading • Favorites • Copy • Category tracking
-   Random styles & trending names on every load
-   ========================================================= */
-/* =========================================================
-   SYMBOL PICKER — Main IIFE ke BAHAR (bilkul alag)
-   ========================================================= */
 (function () {
   'use strict';
 
@@ -16,20 +8,8 @@
     const catScroll = document.getElementById('symbolCatScroll');
     const grid = document.getElementById('symbolGrid');
     const nameInput = document.getElementById('nameInput');
-     // Menu button se bhi open ho
-const menuBtnSym = document.getElementById('symbolsMenuBtn');
-if (menuBtnSym) {
-  menuBtnSym.addEventListener('click', function(e){
-    e.preventDefault();
-    openModal();
-    // Drawer band karo
-    const drawer = document.getElementById('drawer');
-    const mBtn = document.getElementById('menuBtn');
-    if (drawer) drawer.hidden = true;
-    if (mBtn) mBtn.setAttribute('aria-expanded', 'false');
-  });
-}
 
+    // ✅ Pehle check karo — sab elements mil rahe hain ya nahi
     if (!modal || !btn || !window.DATA || !DATA.symbols) {
       console.warn('Symbol picker: modal, button, or DATA.symbols missing');
       return;
@@ -37,6 +17,7 @@ if (menuBtnSym) {
 
     const state = { activeCat: null };
 
+    // Render category chips
     function renderCats() {
       const frag = document.createDocumentFragment();
       DATA.symbols.categories.forEach((cat, i) => {
@@ -52,6 +33,7 @@ if (menuBtnSym) {
       state.activeCat = DATA.symbols.categories[0].id;
     }
 
+    // Render symbols for a category
     function renderSymbols(catId) {
       const cat = DATA.symbols.categories.find(c => c.id === catId);
       if (!cat) return;
@@ -71,6 +53,7 @@ if (menuBtnSym) {
       grid.appendChild(frag);
     }
 
+    // Open modal
     function openModal() {
       modal.hidden = false;
       document.body.style.overflow = 'hidden';
@@ -80,11 +63,13 @@ if (menuBtnSym) {
       }
     }
 
+    // Close modal
     function closeModal() {
       modal.hidden = true;
       document.body.style.overflow = '';
     }
 
+    // Category click
     catScroll.addEventListener('click', (e) => {
       const chip = e.target.closest('.symbol-chip');
       if (!chip) return;
@@ -95,6 +80,7 @@ if (menuBtnSym) {
       grid.scrollTop = 0;
     });
 
+    // Copy / Insert click
     grid.addEventListener('click', (e) => {
       const copyBtn = e.target.closest('.sym-copy');
       const insertBtn = e.target.closest('.sym-insert');
@@ -131,11 +117,29 @@ if (menuBtnSym) {
       }
     });
 
+    // ✅ Ab bind buttons — jab sab functions define ho gaye hain
     btn.addEventListener('click', openModal);
     closeBtn.addEventListener('click', closeModal);
+
+    // ✅ Menu button se bhi open ho
+    const menuBtnSym = document.getElementById('symbolsMenuBtn');
+    if (menuBtnSym) {
+      menuBtnSym.addEventListener('click', function (e) {
+        e.preventDefault();
+        openModal();
+        const drawer = document.getElementById('drawer');
+        const mBtn = document.getElementById('menuBtn');
+        if (drawer) drawer.hidden = true;
+        if (mBtn) mBtn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    // Overlay close
     modal.addEventListener('click', (e) => {
       if (e.target === modal) closeModal();
     });
+
+    // Escape key close
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !modal.hidden) closeModal();
     });
