@@ -634,6 +634,19 @@
     const catScroll = document.getElementById('symbolCatScroll');
     const grid = document.getElementById('symbolGrid');
     const nameInput = document.getElementById('nameInput');
+     // Menu button se bhi open ho
+const menuBtnSym = document.getElementById('symbolsMenuBtn');
+if (menuBtnSym) {
+  menuBtnSym.addEventListener('click', function(e){
+    e.preventDefault();
+    openModal();
+    // Drawer band karo
+    const drawer = document.getElementById('drawer');
+    const mBtn = document.getElementById('menuBtn');
+    if (drawer) drawer.hidden = true;
+    if (mBtn) mBtn.setAttribute('aria-expanded', 'false');
+  });
+}
 
     if (!modal || !btn || !window.DATA || !DATA.symbols) {
       console.warn('Symbol picker: modal, button, or DATA.symbols missing');
