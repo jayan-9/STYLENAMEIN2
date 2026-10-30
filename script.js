@@ -1,154 +1,210 @@
-(function () {
-  'use strict';
 
-  function initSymbolPicker() {
+/* =========================================================
+   ALAG SYMBOL PICKER FUNCTION (Independent)
+   ========================================================= */
+(function () {
+  function initSymbolLibrary() {
     const modal = document.getElementById('symbolModal');
-    const btn = document.getElementById('symbolBtn');
+    const fabBtn = document.getElementById('symbolBtn');
     const closeBtn = document.getElementById('symbolClose');
+    const menuBtn = document.getElementById('symbolsMenuBtn');
     const catScroll = document.getElementById('symbolCatScroll');
     const grid = document.getElementById('symbolGrid');
     const nameInput = document.getElementById('nameInput');
+    const drawer = document.getElementById('drawer');
+    const navMenuBtn = document.getElementById('menuBtn');
 
-    // ✅ Pehle check karo — sab elements mil rahe hain ya nahi
-    if (!modal || !btn || !window.DATA || !DATA.symbols) {
-      console.warn('Symbol picker: modal, button, or DATA.symbols missing');
+    // Agar HTML me modal ya data nahi hai to ruk jao
+    if (!modal || !window.DATA || !DATA.symbols) {
+      console.warn('Symbol modal ya data missing hai');
       return;
     }
 
-    const state = { activeCat: null };
+    let activeCatId = DATA.symbols.categories[0].id;
 
-    // Render category chips
-    function renderCats() {
-      const frag = document.createDocumentFragment();
-      DATA.symbols.categories.forEach((cat, i) => {
-        const a = document.createElement('button');
-        a.type = 'button';
-        a.className = 'symbol-chip' + (i === 0 ? ' active' : '');
-        a.dataset.cat = cat.id;
-        a.innerHTML = (cat.emoji ? cat.emoji + ' ' : '') + cat.name;
-        frag.appendChild(a);
-      });
+    // 1. Category Chips Render Karna
+    function buildCategories() {
       catScroll.innerHTML = '';
-      catScroll.appendChild(frag);
-      state.activeCat = DATA.symbols.categories[0].id;
+      DATA.symbols.categories.forEach((cat, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'symbol-chip' + (index === 0 ? ' active' : '');
+        btn.setAttribute('data-cat', cat.id);
+        btn.innerHTML = (cat.emoji ? cat.emoji + ' ' : '') + cat.name;
+        catScroll.appendChild(btn);
+      });
     }
 
-    // Render symbols for a category
-    function renderSymbols(catId) {
-      const cat = DATA.symbols.categories.find(c => c.id === catId);
-      if (!cat) return;
-      const frag = document.createDocumentFragment();
-      cat.items.forEach(sym => {
+    // 2. Symbols Grid Render Karna
+    function buildSymbols(catId) {
+      const category = DATA.symbols.categories.find(c => c.id === catId);
+      if (!category) return;
+
+      grid.innerHTML = '';
+      category.items.forEach(sym => {
         const card = document.createElement('div');
         card.className = 'symbol-item';
-        card.innerHTML =
-          '<div class="symbol-item-char">' + sym + '</div>' +
-          '<div class="symbol-item-actions">' +
-            '<button type="button" class="sym-copy" data-sym="' + encodeURIComponent(sym) + '">📋</button>' +
-            '<button type="button" class="sym-insert" data-sym="' + encodeURIComponent(sym) + '">⏎</button>' +
-          '</div>';
-        frag.appendChild(card);
+        
+        // Symbol Character
+        const charDiv = document.createElement('div');
+        charDiv.className = 'symbol-item-char';
+        charDiv.textContent = sym;
+
+        // Action Buttons (Copy & Enter)
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'symbol-item-actions';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'sym-copy';
+        copyBtn.textContent = '📋';
+        copyBtn.addEventListener('click', function() {
+          copyToClipboard(sym, copyBtn);
+        });
+
+        const insertBtn = document.createElement('button');
+        insertBtn.type = 'button';
+        insertBtn.className = 'sym-insert';
+        insertBtn.textContent = '⏎';
+        insertBtn.addEventListener('click', function() {
+          insertIntoInput(sym);
+        });
+
+        actionsDiv.appendChild(copyBtn);
+        actionsDiv.appendChild(insertBtn);
+
+        card.appendChild(charDiv);
+        card.appendChild(actionsDiv);
+        grid.appendChild(card);
       });
-      grid.innerHTML = '';
-      grid.appendChild(frag);
     }
 
-    // Open modal
-    function openModal() {
-      modal.hidden = false;
-      document.body.style.overflow = 'hidden';
-      if (!catScroll.children.length) {
-        renderCats();
-        renderSymbols(state.activeCat);
+    // 3. Copy Helper
+    function copyToClipboard(text, btnElement) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          btnElement.textContent = '✓';
+          setTimeout(() => btnElement.textContent = '📋', 1500);
+        }).catch(() => fallbackCopy(text, btnElement));
+      } else {
+        fallbackCopy(text, btnElement);
       }
     }
 
-    // Close modal
+    function fallbackCopy(text, btnElement) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        btnElement.textContent = '✓';
+        setTimeout(() => btnElement.textContent = '📋', 1500);
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+      document.body.removeChild(ta);
+    }
+
+    // 4. Insert Helper
+    function insertIntoInput(symbol) {
+      if (!nameInput) return;
+      
+      // Cursor ki position nikalna
+      const startPos = nameInput.selectionStart || 0;
+      const endPos = nameInput.selectionEnd || 0;
+      const currentVal = nameInput.value;
+      
+      // Naya value banana
+      nameInput.value = currentVal.substring(0, startPos) + symbol + currentVal.substring(endPos);
+      
+      // Cursor ko symbol ke baad set karna
+      nameInput.selectionStart = nameInput.selectionEnd = startPos + symbol.length;
+      
+      // Focus aur input event trigger karna (taaki website ko pata chale name change hua)
+      nameInput.focus();
+      nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+      
+      closeModal();
+    }
+
+    // 5. Open / Close Modal
+    function openModal() {
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      
+      // Pehli baar khulne par data load karo
+      if (catScroll.children.length === 0) {
+        buildCategories();
+        buildSymbols(activeCatId);
+      }
+      
+      // Drawer band karo agar khula hai
+      if (drawer) drawer.hidden = true;
+      if (navMenuBtn) navMenuBtn.setAttribute('aria-expanded', 'false');
+    }
+
     function closeModal() {
       modal.hidden = true;
       document.body.style.overflow = '';
     }
 
-    // Category click
-    catScroll.addEventListener('click', (e) => {
-      const chip = e.target.closest('.symbol-chip');
-      if (!chip) return;
-      Array.from(catScroll.children).forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      state.activeCat = chip.dataset.cat;
-      renderSymbols(state.activeCat);
-      grid.scrollTop = 0;
-    });
+    // 6. Event Listeners Setup
 
-    // Copy / Insert click
-    grid.addEventListener('click', (e) => {
-      const copyBtn = e.target.closest('.sym-copy');
-      const insertBtn = e.target.closest('.sym-insert');
+    // FAB Button (☺︎)
+    if (fabBtn) {
+      fabBtn.addEventListener('click', openModal);
+    }
 
-      if (copyBtn) {
-        const sym = decodeURIComponent(copyBtn.dataset.sym);
-        if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(sym).then(() => {
-            copyBtn.textContent = '✓';
-            setTimeout(() => { copyBtn.textContent = '📋'; }, 1000);
-          });
-        } else {
-          const ta = document.createElement('textarea');
-          ta.value = sym;
-          document.body.appendChild(ta);
-          ta.select();
-          try { document.execCommand('copy'); copyBtn.textContent = '✓'; setTimeout(() => { copyBtn.textContent = '📋'; }, 1000); } catch (err) {}
-          document.body.removeChild(ta);
-        }
-        return;
-      }
-
-      if (insertBtn) {
-        const sym = decodeURIComponent(insertBtn.dataset.sym);
-        if (nameInput) {
-          const start = nameInput.selectionStart || nameInput.value.length;
-          const end = nameInput.selectionEnd || nameInput.value.length;
-          nameInput.value = nameInput.value.slice(0, start) + sym + nameInput.value.slice(end);
-          nameInput.focus();
-          nameInput.selectionStart = nameInput.selectionEnd = start + sym.length;
-          nameInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-        closeModal();
-      }
-    });
-
-    // ✅ Ab bind buttons — jab sab functions define ho gaye hain
-    btn.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModal);
-
-    // ✅ Menu button se bhi open ho
-    const menuBtnSym = document.getElementById('symbolsMenuBtn');
-    if (menuBtnSym) {
-      menuBtnSym.addEventListener('click', function (e) {
+    // Menu Button (Symbols Library)
+    if (menuBtn) {
+      menuBtn.addEventListener('click', function(e) {
         e.preventDefault();
         openModal();
-        const drawer = document.getElementById('drawer');
-        const mBtn = document.getElementById('menuBtn');
-        if (drawer) drawer.hidden = true;
-        if (mBtn) mBtn.setAttribute('aria-expanded', 'false');
       });
     }
 
-    // Overlay close
-    modal.addEventListener('click', (e) => {
+    // Close Button (✕)
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeModal);
+    }
+
+    // Bahar click karne par close
+    modal.addEventListener('click', function(e) {
       if (e.target === modal) closeModal();
     });
 
-    // Escape key close
-    document.addEventListener('keydown', (e) => {
+    // Escape key se close
+    document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+
+    // Category Change Click
+    catScroll.addEventListener('click', function(e) {
+      const chip = e.target.closest('.symbol-chip');
+      if (!chip) return;
+
+      // Sabki active class hatao
+      const allChips = catScroll.querySelectorAll('.symbol-chip');
+      allChips.forEach(c => c.classList.remove('active'));
+
+      // Click wale ko active karo
+      chip.classList.add('active');
+      
+      // Naya category ID set karo aur render karo
+      activeCatId = chip.getAttribute('data-cat');
+      buildSymbols(activeCatId);
+      grid.scrollTop = 0;
     });
   }
 
+  // Initialize after DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSymbolPicker);
+    document.addEventListener('DOMContentLoaded', initSymbolLibrary);
   } else {
-    initSymbolPicker();
+    initSymbolLibrary();
   }
 })();
 
