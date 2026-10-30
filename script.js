@@ -592,182 +592,6 @@
     }
   }
 
-   /* ========== SYMBOL POPUP (module) ========== */
-(function(){
-  'use strict';
-
-  // Wait for DOM and other defer scripts (data.js, symbols.js) to load
-  function initSymbols(){
-    const popup = document.getElementById('symbolPopup');
-    const backdrop = document.getElementById('symbolBackdrop');
-    const btnOpen = document.getElementById('symbolBtn');
-    const btnClose = document.getElementById('symbolClose');
-    const catBar = document.getElementById('symbolCatBar');
-    const grid = document.getElementById('symbolGrid');
-    const nameInput = document.getElementById('nameInput');
-
-    // 🔍 DEBUG LOGS
-    console.log('--- SYMBOL POPUP DEBUG ---');
-    console.log('Popup Element:', popup ? '✅ Found' : '❌ Missing');
-    console.log('Button Element:', btnOpen ? '✅ Found' : '❌ Missing');
-    console.log('CatBar Element:', catBar ? '✅ Found' : '❌ Missing');
-    console.log('Grid Element:', grid ? '✅ Found' : '❌ Missing');
-    console.log('SYMBOL_DATA:', typeof SYMBOL_DATA !== 'undefined' ? '✅ Loaded' : '❌ Missing (symbols.js)');
-    console.log('--------------------------');
-
-    if (!popup || !btnOpen || !catBar || !grid) {
-      console.warn('❌ Stopped: Some HTML elements are missing in index.html');
-      return;
-    }
-    if (typeof SYMBOL_DATA === 'undefined') {
-      console.warn('❌ Stopped: symbols.js is not loaded. Check script order in HTML.');
-      return;
-    }
-
-    let activeCat = SYMBOL_DATA.categories[0].id;
-
-    // --- Local copyText ---
-    function localCopy(text){
-      if (navigator.clipboard && window.isSecureContext) {
-        return navigator.clipboard.writeText(text);
-      }
-      return new Promise((res, rej) => {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.top = '-9999px';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        try { document.execCommand('copy'); res(); }
-        catch(e) { rej(e); }
-        document.body.removeChild(ta);
-      });
-    }
-
-    // --- Render chips ---
-    function renderChips(){
-      catBar.innerHTML = '';
-      SYMBOL_DATA.categories.forEach(cat => {
-        const chip = document.createElement('button');
-        chip.className = 'sym-chip' + (cat.id === activeCat ? ' active' : '');
-        chip.type = 'button';
-        chip.textContent = cat.emoji + ' ' + cat.name;
-        chip.addEventListener('click', () => {
-          activeCat = cat.id;
-          renderChips();
-          renderSymbols();
-          grid.scrollTop = 0;
-        });
-        catBar.appendChild(chip);
-      });
-      const activeChip = catBar.querySelector('.sym-chip.active');
-      if (activeChip) {
-        const offset = activeChip.offsetLeft - catBar.clientWidth/2 + activeChip.clientWidth/2;
-        catBar.scrollTo({ left: Math.max(0, offset), behavior: 'smooth' });
-      }
-    }
-
-    // --- Render symbols ---
-    function renderSymbols(){
-      const cat = SYMBOL_DATA.categories.find(c => c.id === activeCat);
-      if (!cat) return;
-
-      grid.innerHTML = '';
-      const frag = document.createDocumentFragment();
-
-      cat.symbols.forEach(sym => {
-        const item = document.createElement('div');
-        item.className = 'sym-item';
-
-        const charEl = document.createElement('div');
-        charEl.className = 'sym-char';
-        charEl.textContent = sym;
-
-        const actions = document.createElement('div');
-        actions.className = 'sym-actions';
-
-        const copyBtn = document.createElement('button');
-        copyBtn.type = 'button';
-        copyBtn.textContent = '📋';
-        copyBtn.title = 'Copy';
-
-        const insertBtn = document.createElement('button');
-        insertBtn.type = 'button';
-        insertBtn.textContent = '↵';
-        insertBtn.title = 'Insert into name';
-
-        copyBtn.addEventListener('click', () => {
-          localCopy(sym).then(() => {
-            copyBtn.classList.add('copied');
-            copyBtn.textContent = '✓';
-            setTimeout(() => {
-              copyBtn.classList.remove('copied');
-              copyBtn.textContent = '📋';
-            }, 1000);
-          }).catch(() => {});
-        });
-
-        insertBtn.addEventListener('click', () => {
-          if (!nameInput) return;
-          nameInput.value = (nameInput.value || '') + sym;
-          nameInput.dispatchEvent(new Event('input'));
-          insertBtn.classList.add('inserted');
-          insertBtn.textContent = '✓';
-          setTimeout(() => {
-            insertBtn.classList.remove('inserted');
-            insertBtn.textContent = '↵';
-          }, 1000);
-        });
-
-        actions.appendChild(copyBtn);
-        actions.appendChild(insertBtn);
-        item.appendChild(charEl);
-        item.appendChild(actions);
-        frag.appendChild(item);
-      });
-
-      grid.appendChild(frag);
-    }
-
-    // --- Open / Close ---
-    let prevOverflow = '';
-    function openPopup(){
-      console.log('🚀 Opening Popup...');
-      activeCat = SYMBOL_DATA.categories[0].id;
-      renderChips();
-      renderSymbols();
-      popup.hidden = false;
-      prevOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      const drawer = document.getElementById('drawer');
-      if (drawer) drawer.hidden = true;
-      const menuBtn = document.getElementById('menuBtn');
-      if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
-    }
-    function closePopup(){
-      popup.hidden = true;
-      document.body.style.overflow = prevOverflow || '';
-    }
-
-    btnOpen.addEventListener('click', openPopup);
-    if (btnClose) btnClose.addEventListener('click', closePopup);
-    if (backdrop) backdrop.addEventListener('click', closePopup);
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && !popup.hidden) closePopup();
-    });
-
-    console.log('✅ Symbol popup ready and listening for clicks');
-  }
-
-  // Run after DOM + defer scripts load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSymbols);
-  } else {
-    initSymbols();
-  }
-})();
-
 
   /* ---------- INIT ---------- */
   function init() {
@@ -783,6 +607,135 @@
     renderStaticSections();
     renderFavorites();
     bindEvents();
+     /* =========================================================
+   SYMBOL PICKER
+   ========================================================= */
+(function () {
+  'use strict';
+
+  const modal = document.getElementById('symbolModal');
+  const btn = document.getElementById('symbolBtn');
+  const closeBtn = document.getElementById('symbolClose');
+  const catScroll = document.getElementById('symbolCatScroll');
+  const grid = document.getElementById('symbolGrid');
+  const nameInput = document.getElementById('nameInput');
+
+  if (!modal || !btn || !window.DATA || !DATA.symbols) return;
+
+  const state = {
+    activeCat: null
+  };
+
+  // Render category chips
+  function renderCats() {
+    const frag = document.createDocumentFragment();
+    DATA.symbols.categories.forEach((cat, i) => {
+      const a = document.createElement('button');
+      a.type = 'button';
+      a.className = 'symbol-chip' + (i === 0 ? ' active' : '');
+      a.dataset.cat = cat.id;
+      a.innerHTML = (cat.emoji ? cat.emoji + ' ' : '') + cat.name;
+      frag.appendChild(a);
+    });
+    catScroll.innerHTML = '';
+    catScroll.appendChild(frag);
+    state.activeCat = DATA.symbols.categories[0].id;
+  }
+
+  // Render symbols for a category
+  function renderSymbols(catId) {
+    const cat = DATA.symbols.categories.find(c => c.id === catId);
+    if (!cat) return;
+    const frag = document.createDocumentFragment();
+    cat.items.forEach(sym => {
+      const card = document.createElement('div');
+      card.className = 'symbol-item';
+      card.innerHTML =
+        '<div class="symbol-item-char">' + sym + '</div>' +
+        '<div class="symbol-item-actions">' +
+          '<button type="button" class="sym-copy" data-sym="' + encodeURIComponent(sym) + '">📋</button>' +
+          '<button type="button" class="sym-insert" data-sym="' + encodeURIComponent(sym) + '">⏎</button>' +
+        '</div>';
+      frag.appendChild(card);
+    });
+    grid.innerHTML = '';
+    grid.appendChild(frag);
+  }
+
+  // Open modal
+  function openModal() {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (!catScroll.children.length) {
+      renderCats();
+      renderSymbols(state.activeCat);
+    }
+  }
+
+  // Close modal
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  // Category click
+  catScroll.addEventListener('click', (e) => {
+    const chip = e.target.closest('.symbol-chip');
+    if (!chip) return;
+    Array.from(catScroll.children).forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    state.activeCat = chip.dataset.cat;
+    renderSymbols(state.activeCat);
+    grid.scrollTop = 0;
+  });
+
+  // Copy / Insert click
+  grid.addEventListener('click', (e) => {
+    const copyBtn = e.target.closest('.sym-copy');
+    const insertBtn = e.target.closest('.sym-insert');
+
+    if (copyBtn) {
+      const sym = decodeURIComponent(copyBtn.dataset.sym);
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(sym).then(() => {
+          copyBtn.textContent = '✓';
+          setTimeout(() => { copyBtn.textContent = '📋'; }, 1000);
+        });
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = sym;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); copyBtn.textContent = '✓'; setTimeout(() => { copyBtn.textContent = '📋'; }, 1000); } catch (err) {}
+        document.body.removeChild(ta);
+      }
+      return;
+    }
+
+    if (insertBtn) {
+      const sym = decodeURIComponent(insertBtn.dataset.sym);
+      if (nameInput) {
+        const start = nameInput.selectionStart || nameInput.value.length;
+        const end = nameInput.selectionEnd || nameInput.value.length;
+        nameInput.value = nameInput.value.slice(0, start) + sym + nameInput.value.slice(end);
+        nameInput.focus();
+        nameInput.selectionStart = nameInput.selectionEnd = start + sym.length;
+        nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      closeModal();
+    }
+  });
+
+  // Bind buttons
+  btn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.hidden) closeModal();
+  });
+})();
     setupLazyLoad();
 
     const input = $('#nameInput');
