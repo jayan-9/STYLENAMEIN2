@@ -423,7 +423,26 @@
 </p>
 </footer>
 
+
+
+<!-- ============ FLOATING BUTTONS ============ -->
+<button class="fab fab-top" id="topBtn" aria-label="Scroll to top">↑</button>
+<button class="fab fab-symbol" id="symbolBtn" aria-label="Open symbols">☺︎</button>
     
+<!-- ============ STICKY BOTTOM BAR ============ -->
+<div class="bottom-bar" id="bottomBar">
+  <div class="bb-inner">
+    <label class="bb-input">
+    <span class="bb-icon" aria-hidden="true">☺︎</span>
+      <input type="text" id="nameInput" placeholder="Enter your name…" maxlength="22"
+             autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Your name">
+      <button type="button" class="bb-clear" id="clearBtn" aria-label="Clear">✕</button>
+    </label>
+    <button type="button" class="bb-btn" id="genBtn">Generate</button>
+  </div>
+</div>
+
+        
     <!-- ============ SYMBOL POPUP ============ -->
 <div class="symbol-popup" id="symbolPopup" hidden>
   <div class="symbol-backdrop" id="symbolBackdrop"></div>
@@ -434,23 +453,6 @@
     </div>
     <div class="symbol-cat-bar" id="symbolCatBar"></div>
     <div class="symbol-grid" id="symbolGrid"></div>
-  </div>
-</div>
-
-<!-- ============ FLOATING BUTTONS ============ -->
-<button class="fab fab-top" id="topBtn" aria-label="Scroll to top">↑</button>
-<button class="fab fab-symbol" id="symbolBtn" aria-label="Open symbols">☺︎</button>
-    
-<!-- ============ STICKY BOTTOM BAR ============ -->
-<div class="bottom-bar" id="bottomBar">
-  <div class="bb-inner">
-    <label class="bb-input">
-      <span class="bb-icon" aria-hidden="true">✎</span>
-      <input type="text" id="nameInput" placeholder="Enter your name…" maxlength="22"
-             autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Your name">
-      <button type="button" class="bb-clear" id="clearBtn" aria-label="Clear">✕</button>
-    </label>
-    <button type="button" class="bb-btn" id="genBtn">Generate</button>
   </div>
 </div>
 
