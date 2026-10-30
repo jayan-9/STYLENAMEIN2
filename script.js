@@ -618,3 +618,151 @@
     init();
   }
 })();
+
+/* ========== SYMBOL POPUP (module) ========== */
+(function(){
+  'use strict';
+
+  const popup = document.getElementById('symbolPopup');
+  const backdrop = document.getElementById('symbolBackdrop');
+  const btnOpen = document.getElementById('symbolBtn');
+  const btnClose = document.getElementById('symbolClose');
+  const catBar = document.getElementById('symbolCatBar');
+  const grid = document.getElementById('symbolGrid');
+  const nameInput = document.getElementById('nameInput');
+
+  if (!popup || !btnOpen || !catBar || !grid) return;
+  if (typeof SYMBOL_DATA === 'undefined') {
+    console.warn('symbols.js not loaded');
+    return;
+  }
+
+  let activeCat = SYMBOL_DATA.categories[0].id;
+
+  // --- Render category chips ---
+  function renderChips(){
+    catBar.innerHTML = '';
+    SYMBOL_DATA.categories.forEach(cat => {
+      const chip = document.createElement('button');
+      chip.className = 'sym-chip' + (cat.id === activeCat ? ' active' : '');
+      chip.type = 'button';
+      chip.textContent = cat.emoji + ' ' + cat.name;
+      chip.addEventListener('click', () => {
+        activeCat = cat.id;
+        renderChips();
+        renderSymbols();
+        grid.scrollTop = 0;
+      });
+      catBar.appendChild(chip);
+    });
+    // Scroll active chip into view
+    const activeChip = catBar.querySelector('.sym-chip.active');
+    if (activeChip) {
+      const offset = activeChip.offsetLeft - catBar.clientWidth/2 + activeChip.clientWidth/2;
+      catBar.scrollTo({ left: Math.max(0, offset), behavior: 'smooth' });
+    }
+  }
+
+  // --- Render symbols for active category ---
+  function renderSymbols(){
+    const cat = SYMBOL_DATA.categories.find(c => c.id === activeCat);
+    if (!cat) return;
+
+    grid.innerHTML = '';
+    const frag = document.createDocumentFragment();
+
+    cat.symbols.forEach(sym => {
+      const item = document.createElement('div');
+      item.className = 'sym-item';
+
+      const charEl = document.createElement('div');
+      charEl.className = 'sym-char';
+      charEl.textContent = sym;
+
+      const actions = document.createElement('div');
+      actions.className = 'sym-actions';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.textContent = '📋';
+      copyBtn.title = 'Copy';
+
+      const insertBtn = document.createElement('button');
+      insertBtn.type = 'button';
+      insertBtn.textContent = '↵';
+      insertBtn.title = 'Insert into name';
+
+      copyBtn.addEventListener('click', () => {
+        copyText(sym).then(() => {
+          copyBtn.classList.add('copied');
+          copyBtn.textContent = '✓';
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.textContent = '📋';
+          }, 1000);
+        }).catch(() => {});
+      });
+
+      insertBtn.addEventListener('click', () => {
+        if (!nameInput) return;
+        nameInput.value = (nameInput.value || '') + sym;
+        nameInput.dispatchEvent(new Event('input'));
+        insertBtn.classList.add('inserted');
+        insertBtn.textContent = '✓';
+        setTimeout(() => {
+          insertBtn.classList.remove('inserted');
+          insertBtn.textContent = '↵';
+        }, 1000);
+      });
+
+      actions.appendChild(copyBtn);
+      actions.appendChild(insertBtn);
+
+      item.appendChild(charEl);
+      item.appendChild(actions);
+      frag.appendChild(item);
+    });
+
+    grid.appendChild(frag);
+  }
+
+  // --- Open / Close ---
+  function openPopup(){
+    activeCat = SYMBOL_DATA.categories[0].id;
+    renderChips();
+    renderSymbols();
+    popup.hidden = false;
+    document.body.style.overflow = 'hidden';
+    // Close menu drawer if open
+    const drawer = document.getElementById('drawer');
+    if (drawer) drawer.hidden = true;
+    const menuBtn = document.getElementById('menuBtn');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+  }
+  function closePopup(){
+    popup.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  btnOpen.addEventListener('click', openPopup);
+  if (btnClose) btnClose.addEventListener('click', closePopup);
+  if (backdrop) backdrop.addEventListener('click', closePopup);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !popup.hidden) closePopup();
+  });
+
+  // --- Global copyText (fallback if not defined in script.js) ---
+  function copyText(text){
+    if (typeof window.copyText === 'function') return window.copyText(text);
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise((res, rej) => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); res(); } catch(e) { rej(e); }
+      document.body.removeChild(ta);
+    });
+  }
+})();
