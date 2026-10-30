@@ -3,6 +3,151 @@
    Lazy loading • Favorites • Copy • Category tracking
    Random styles & trending names on every load
    ========================================================= */
+/* =========================================================
+   SYMBOL PICKER — Main IIFE ke BAHAR (bilkul alag)
+   ========================================================= */
+(function () {
+  'use strict';
+
+  function initSymbolPicker() {
+    const modal = document.getElementById('symbolModal');
+    const btn = document.getElementById('symbolBtn');
+    const closeBtn = document.getElementById('symbolClose');
+    const catScroll = document.getElementById('symbolCatScroll');
+    const grid = document.getElementById('symbolGrid');
+    const nameInput = document.getElementById('nameInput');
+     // Menu button se bhi open ho
+const menuBtnSym = document.getElementById('symbolsMenuBtn');
+if (menuBtnSym) {
+  menuBtnSym.addEventListener('click', function(e){
+    e.preventDefault();
+    openModal();
+    // Drawer band karo
+    const drawer = document.getElementById('drawer');
+    const mBtn = document.getElementById('menuBtn');
+    if (drawer) drawer.hidden = true;
+    if (mBtn) mBtn.setAttribute('aria-expanded', 'false');
+  });
+}
+
+    if (!modal || !btn || !window.DATA || !DATA.symbols) {
+      console.warn('Symbol picker: modal, button, or DATA.symbols missing');
+      return;
+    }
+
+    const state = { activeCat: null };
+
+    function renderCats() {
+      const frag = document.createDocumentFragment();
+      DATA.symbols.categories.forEach((cat, i) => {
+        const a = document.createElement('button');
+        a.type = 'button';
+        a.className = 'symbol-chip' + (i === 0 ? ' active' : '');
+        a.dataset.cat = cat.id;
+        a.innerHTML = (cat.emoji ? cat.emoji + ' ' : '') + cat.name;
+        frag.appendChild(a);
+      });
+      catScroll.innerHTML = '';
+      catScroll.appendChild(frag);
+      state.activeCat = DATA.symbols.categories[0].id;
+    }
+
+    function renderSymbols(catId) {
+      const cat = DATA.symbols.categories.find(c => c.id === catId);
+      if (!cat) return;
+      const frag = document.createDocumentFragment();
+      cat.items.forEach(sym => {
+        const card = document.createElement('div');
+        card.className = 'symbol-item';
+        card.innerHTML =
+          '<div class="symbol-item-char">' + sym + '</div>' +
+          '<div class="symbol-item-actions">' +
+            '<button type="button" class="sym-copy" data-sym="' + encodeURIComponent(sym) + '">📋</button>' +
+            '<button type="button" class="sym-insert" data-sym="' + encodeURIComponent(sym) + '">⏎</button>' +
+          '</div>';
+        frag.appendChild(card);
+      });
+      grid.innerHTML = '';
+      grid.appendChild(frag);
+    }
+
+    function openModal() {
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      if (!catScroll.children.length) {
+        renderCats();
+        renderSymbols(state.activeCat);
+      }
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    catScroll.addEventListener('click', (e) => {
+      const chip = e.target.closest('.symbol-chip');
+      if (!chip) return;
+      Array.from(catScroll.children).forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.activeCat = chip.dataset.cat;
+      renderSymbols(state.activeCat);
+      grid.scrollTop = 0;
+    });
+
+    grid.addEventListener('click', (e) => {
+      const copyBtn = e.target.closest('.sym-copy');
+      const insertBtn = e.target.closest('.sym-insert');
+
+      if (copyBtn) {
+        const sym = decodeURIComponent(copyBtn.dataset.sym);
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(sym).then(() => {
+            copyBtn.textContent = '✓';
+            setTimeout(() => { copyBtn.textContent = '📋'; }, 1000);
+          });
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = sym;
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); copyBtn.textContent = '✓'; setTimeout(() => { copyBtn.textContent = '📋'; }, 1000); } catch (err) {}
+          document.body.removeChild(ta);
+        }
+        return;
+      }
+
+      if (insertBtn) {
+        const sym = decodeURIComponent(insertBtn.dataset.sym);
+        if (nameInput) {
+          const start = nameInput.selectionStart || nameInput.value.length;
+          const end = nameInput.selectionEnd || nameInput.value.length;
+          nameInput.value = nameInput.value.slice(0, start) + sym + nameInput.value.slice(end);
+          nameInput.focus();
+          nameInput.selectionStart = nameInput.selectionEnd = start + sym.length;
+          nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        closeModal();
+      }
+    });
+
+    btn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSymbolPicker);
+  } else {
+    initSymbolPicker();
+  }
+})();
+
 (function () {
   'use strict';
 
@@ -621,147 +766,3 @@
 })();  // ← Ye main IIFE ka closing hai
 
 
-/* =========================================================
-   SYMBOL PICKER — Main IIFE ke BAHAR (bilkul alag)
-   ========================================================= */
-(function () {
-  'use strict';
-
-  function initSymbolPicker() {
-    const modal = document.getElementById('symbolModal');
-    const btn = document.getElementById('symbolBtn');
-    const closeBtn = document.getElementById('symbolClose');
-    const catScroll = document.getElementById('symbolCatScroll');
-    const grid = document.getElementById('symbolGrid');
-    const nameInput = document.getElementById('nameInput');
-     // Menu button se bhi open ho
-const menuBtnSym = document.getElementById('symbolsMenuBtn');
-if (menuBtnSym) {
-  menuBtnSym.addEventListener('click', function(e){
-    e.preventDefault();
-    openModal();
-    // Drawer band karo
-    const drawer = document.getElementById('drawer');
-    const mBtn = document.getElementById('menuBtn');
-    if (drawer) drawer.hidden = true;
-    if (mBtn) mBtn.setAttribute('aria-expanded', 'false');
-  });
-}
-
-    if (!modal || !btn || !window.DATA || !DATA.symbols) {
-      console.warn('Symbol picker: modal, button, or DATA.symbols missing');
-      return;
-    }
-
-    const state = { activeCat: null };
-
-    function renderCats() {
-      const frag = document.createDocumentFragment();
-      DATA.symbols.categories.forEach((cat, i) => {
-        const a = document.createElement('button');
-        a.type = 'button';
-        a.className = 'symbol-chip' + (i === 0 ? ' active' : '');
-        a.dataset.cat = cat.id;
-        a.innerHTML = (cat.emoji ? cat.emoji + ' ' : '') + cat.name;
-        frag.appendChild(a);
-      });
-      catScroll.innerHTML = '';
-      catScroll.appendChild(frag);
-      state.activeCat = DATA.symbols.categories[0].id;
-    }
-
-    function renderSymbols(catId) {
-      const cat = DATA.symbols.categories.find(c => c.id === catId);
-      if (!cat) return;
-      const frag = document.createDocumentFragment();
-      cat.items.forEach(sym => {
-        const card = document.createElement('div');
-        card.className = 'symbol-item';
-        card.innerHTML =
-          '<div class="symbol-item-char">' + sym + '</div>' +
-          '<div class="symbol-item-actions">' +
-            '<button type="button" class="sym-copy" data-sym="' + encodeURIComponent(sym) + '">📋</button>' +
-            '<button type="button" class="sym-insert" data-sym="' + encodeURIComponent(sym) + '">⏎</button>' +
-          '</div>';
-        frag.appendChild(card);
-      });
-      grid.innerHTML = '';
-      grid.appendChild(frag);
-    }
-
-    function openModal() {
-      modal.hidden = false;
-      document.body.style.overflow = 'hidden';
-      if (!catScroll.children.length) {
-        renderCats();
-        renderSymbols(state.activeCat);
-      }
-    }
-
-    function closeModal() {
-      modal.hidden = true;
-      document.body.style.overflow = '';
-    }
-
-    catScroll.addEventListener('click', (e) => {
-      const chip = e.target.closest('.symbol-chip');
-      if (!chip) return;
-      Array.from(catScroll.children).forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      state.activeCat = chip.dataset.cat;
-      renderSymbols(state.activeCat);
-      grid.scrollTop = 0;
-    });
-
-    grid.addEventListener('click', (e) => {
-      const copyBtn = e.target.closest('.sym-copy');
-      const insertBtn = e.target.closest('.sym-insert');
-
-      if (copyBtn) {
-        const sym = decodeURIComponent(copyBtn.dataset.sym);
-        if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(sym).then(() => {
-            copyBtn.textContent = '✓';
-            setTimeout(() => { copyBtn.textContent = '📋'; }, 1000);
-          });
-        } else {
-          const ta = document.createElement('textarea');
-          ta.value = sym;
-          document.body.appendChild(ta);
-          ta.select();
-          try { document.execCommand('copy'); copyBtn.textContent = '✓'; setTimeout(() => { copyBtn.textContent = '📋'; }, 1000); } catch (err) {}
-          document.body.removeChild(ta);
-        }
-        return;
-      }
-
-      if (insertBtn) {
-        const sym = decodeURIComponent(insertBtn.dataset.sym);
-        if (nameInput) {
-          const start = nameInput.selectionStart || nameInput.value.length;
-          const end = nameInput.selectionEnd || nameInput.value.length;
-          nameInput.value = nameInput.value.slice(0, start) + sym + nameInput.value.slice(end);
-          nameInput.focus();
-          nameInput.selectionStart = nameInput.selectionEnd = start + sym.length;
-          nameInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-        closeModal();
-      }
-    });
-
-    btn.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !modal.hidden) closeModal();
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSymbolPicker);
-  } else {
-    initSymbolPicker();
-  }
-})();
