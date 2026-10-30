@@ -623,7 +623,7 @@
 (function(){
   'use strict';
 
-  // Wait for symbols.js to load (defer)
+  // Wait for DOM and other defer scripts (data.js, symbols.js) to load
   function initSymbols(){
     const popup = document.getElementById('symbolPopup');
     const backdrop = document.getElementById('symbolBackdrop');
@@ -633,18 +633,27 @@
     const grid = document.getElementById('symbolGrid');
     const nameInput = document.getElementById('nameInput');
 
+    // 🔍 DEBUG LOGS
+    console.log('--- SYMBOL POPUP DEBUG ---');
+    console.log('Popup Element:', popup ? '✅ Found' : '❌ Missing');
+    console.log('Button Element:', btnOpen ? '✅ Found' : '❌ Missing');
+    console.log('CatBar Element:', catBar ? '✅ Found' : '❌ Missing');
+    console.log('Grid Element:', grid ? '✅ Found' : '❌ Missing');
+    console.log('SYMBOL_DATA:', typeof SYMBOL_DATA !== 'undefined' ? '✅ Loaded' : '❌ Missing (symbols.js)');
+    console.log('--------------------------');
+
     if (!popup || !btnOpen || !catBar || !grid) {
-      console.warn('Symbol popup elements missing');
+      console.warn('❌ Stopped: Some HTML elements are missing in index.html');
       return;
     }
     if (typeof SYMBOL_DATA === 'undefined') {
-      console.warn('symbols.js not loaded');
+      console.warn('❌ Stopped: symbols.js is not loaded. Check script order in HTML.');
       return;
     }
 
     let activeCat = SYMBOL_DATA.categories[0].id;
 
-    // --- Local copyText (self-contained, no dependency) ---
+    // --- Local copyText ---
     function localCopy(text){
       if (navigator.clipboard && window.isSecureContext) {
         return navigator.clipboard.writeText(text);
@@ -751,6 +760,7 @@
     // --- Open / Close ---
     let prevOverflow = '';
     function openPopup(){
+      console.log('🚀 Opening Popup...');
       activeCat = SYMBOL_DATA.categories[0].id;
       renderChips();
       renderSymbols();
@@ -774,7 +784,7 @@
       if (e.key === 'Escape' && !popup.hidden) closePopup();
     });
 
-    console.log('✅ Symbol popup ready');
+    console.log('✅ Symbol popup ready and listening for clicks');
   }
 
   // Run after DOM + defer scripts load
