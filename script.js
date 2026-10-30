@@ -592,34 +592,7 @@
     }
   }
 
-  /* ---------- INIT ---------- */
-  function init() {
-    if (typeof DATA === 'undefined' || !DATA.categories) {
-      console.error('data.js missing or invalid');
-      return;
-    }
-
-    loadFavs();
-    shuffleAllCategories();   // ✅ Pehli baar shuffle
-    renderCategoryChips();
-    renderCategorySections();
-    renderStaticSections();
-    renderFavorites();
-    bindEvents();
-    setupLazyLoad();
-
-    const input = $('#nameInput');
-    if (input && state.name) input.value = state.name;
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-
-/* ========== SYMBOL POPUP (module) ========== */
+   /* ========== SYMBOL POPUP (module) ========== */
 (function(){
   'use strict';
 
@@ -794,3 +767,32 @@
     initSymbols();
   }
 })();
+
+
+  /* ---------- INIT ---------- */
+  function init() {
+    if (typeof DATA === 'undefined' || !DATA.categories) {
+      console.error('data.js missing or invalid');
+      return;
+    }
+
+    loadFavs();
+    shuffleAllCategories();   // ✅ Pehli baar shuffle
+    renderCategoryChips();
+    renderCategorySections();
+    renderStaticSections();
+    renderFavorites();
+    bindEvents();
+    setupLazyLoad();
+
+    const input = $('#nameInput');
+    if (input && state.name) input.value = state.name;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
